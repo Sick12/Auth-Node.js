@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    h1 #{user.username}'s Profile
+    if user.isAdmin
+     p.adminStatusOn You're an Admin
+           
+    else
+     p.adminStatusOff You're a normal User
