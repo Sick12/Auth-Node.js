@@ -139,7 +139,7 @@ router.get('/profile', userAuthentificated, function(req, res)
          return next();
      }else 
      {
-         req.flash('danger', 'You must be logged in for that');
+         req.flash('danger', 'Login first');
          res.redirect('/users/login');
      }
 

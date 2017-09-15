@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();  //Init app
+const ConnectRoles = require('connect-roles');
+const roles = new ConnectRoles();
 
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
@@ -116,16 +118,21 @@ app.use(passport.session());
 app.get('*', function(req, res, next)
 {
     res.locals.user = req.user || null;
-    res.locals.currentUser = req.user;
+    //res.locals.currentUser = req.user;
     next();
 });
+
+//Connect-roles middleware
+
+    app.use(roles.middleware());
 
 //Import Route Files from users
 
 let users = require('./routes/users');
 app.use('/users', users);
 
-
+let projects = require('./routes/projects');
+app.use('/projects', projects);
 
 //Start Server
 
