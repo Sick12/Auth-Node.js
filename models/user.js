@@ -30,7 +30,7 @@ let userSchema = mongoose.Schema
     //      default: false
     //  },
 
-     role: 
+     roles: 
      {
          type: 
          [{
