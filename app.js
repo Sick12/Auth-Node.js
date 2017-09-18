@@ -122,9 +122,10 @@ app.get('*', function(req, res, next)
     next();
 });
 
-//Connect-roles middleware
 
-    app.use(roles.middleware());
+  
+  
+ 
 
 //Import Route Files from users
 
@@ -138,7 +139,7 @@ app.use('/projects', projects);
 
 app.listen(port, ()=>
     {
-        console.log('Server is starting on port ' + port + '...');
+        console.log('Server is starting on port ' + port);
     });
 
     //Home Route
@@ -162,7 +163,58 @@ app.get('/', function (req, res)
    
 
 
-
-
-
+let user = new ConnectRoles({
+    failureHandler: function (req, res, action) {
+      // optional function to customise code that runs when 
+      // user fails authorisation 
+      let accept = req.headers.accept || '';
+      res.status(403);
+      if (~accept.indexOf('html')) {
+        res.render('access-denied', {action: action});
+      } else {
+        res.send('Access Denied - You don\'t have permission to: ' + action);
+      }
+    }
+  });
    
+ //Middleware Connect-roles 
+  app.use(user.middleware());
+   
+  //anonymous users can only access the home page 
+  //returning false stops any more rules from being 
+  //considered 
+  user.use(function (req, action) {
+    if (!req.isAuthenticated()) return action === 'access home page';
+    console.log(user);
+  });
+   
+  //moderator users can access private page, but 
+  //they might not be the only ones so we don't return 
+  //false if the user isn't a moderator 
+  user.use('access private page', function (req) {
+    if (req.user.role === 'moderator') {
+        console.log(user);
+      return true;
+    }
+  });
+   
+  //admin users can access all pages 
+  user.use(function (req) {
+    if (req.user.role === 'admin') {
+        console.log(user);
+      return true;
+    }
+  });
+   
+   
+
+  app.get('/private', user.can('access private page'), function (req, res) {
+    res.render('private');
+  });
+  app.get('/admin', user.can('access admin page'), function (req, res) {
+    res.render('admin');
+  });
+
+  app.get('/test', user.can('access private page'), function (req, res) {
+    res.render('test');
+  });

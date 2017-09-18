@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-//const bcrypt = require('bcrypt');
+
 
 let userSchema = mongoose.Schema
 ({
@@ -24,11 +24,27 @@ let userSchema = mongoose.Schema
          required: true
      },
 
-     isAdmin:
+    //  isAdmin:
+    //  {
+    //      type:Boolean,
+    //      default: false
+    //  },
+
+     role: 
      {
-         type:Boolean,
-         default: false
+         type: 
+         [{
+            type: String,
+            enum: ['user','moderator', 'admin']
+         }],
+         default:['admin']
      }
+
+    //  userProperty:
+    //  {
+    //      type: String,
+    //      default:['admin']
+    //  }
 
 });
 
